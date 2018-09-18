@@ -27,6 +27,10 @@
 
         </div>
 
+        <div v-show="error">
+            <p v-text="error"></p>
+        </div>
+
     </div>
 
 </template>
@@ -51,7 +55,8 @@ export default {
 
             cep : "",
             address : {},
-            loading : false
+            loading : false,
+            error : ""
 
        }
 
@@ -60,6 +65,7 @@ export default {
 
         searchCep(){
             this.loading = true;
+            this.error = "";
 
             this.$http.get("https://api.postmon.com.br/v1/cep/" + this.cep).then(
                 response => {
@@ -69,7 +75,8 @@ export default {
                 },
                 error => {
 
-                    console.log(error);
+                    this.address = {}
+                    this.error = "CEP not found"
 
                 }
             ).finally(() => {
