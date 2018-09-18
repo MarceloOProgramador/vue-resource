@@ -12,13 +12,15 @@
 
                 <input type="text" name="cep" id="cep" v-model="cep">
 
-                <button type="submit">Pesquisar</button>
+                <button type="submit" v-if="!loading">Pesquisar</button>
+
+                <button v-if="loading" disabled>Carregando...</button>
 
             </form>
 
         </div>
 
-        <div>
+        <div v-if="address.cidade">
 
             <p><b>Cidade: </b>{{address.cidade}}</p>
             <p><b>Estado: </b>{{address.estado}}</p>
@@ -48,7 +50,8 @@ export default {
        return {
 
             cep : "",
-            address : {}
+            address : {},
+            loading : false
 
        }
 
@@ -56,11 +59,12 @@ export default {
     methods : {
 
         searchCep(){
+            this.loading = true;
 
             this.$http.get("https://api.postmon.com.br/v1/cep/" + this.cep).then(
                 response => {
-                    console.log(response.body)
-                    this.address = response.body
+
+                    this.address = response.body;
                     
                 },
                 error => {
@@ -68,7 +72,9 @@ export default {
                     console.log(error);
 
                 }
-            )
+            ).finally(() => {
+                this.loading = false;
+            })
         }
     }
 }
